@@ -9,7 +9,7 @@ namespace Castelom.Sorting_Algorithms
 {
     internal class Ordered
     {
-        private void Swap(int[] array,  int indexPrev, int indexNext)
+        private void Swap(List<int> array,  int indexPrev, int indexNext)
         {
             int aux = array[indexPrev];
             array[indexPrev] = array[indexNext];
@@ -24,12 +24,21 @@ namespace Castelom.Sorting_Algorithms
             }
         }
 
-        //----------- Sorting Algorithms---------------//
-        public void BubbleSort(int[] array)
+        public void printArray(IList<int> array)
         {
-            for(int i = 0; i < array.Length-1; i++)
+            foreach (int i in array)
             {
-                for (int j = 1;j < array.Length-1-i; j++)
+                Console.WriteLine(i);
+            }
+        }
+
+        //----------- Sorting Algorithms---------------//
+        //----------- Low Performance---------------//
+        public void BubbleSort(List<int> array)
+        {
+            for(int i = 0; i < array.Count-1; i++)
+            {
+                for (int j = 1;j < array.Count - 1-i; j++)
                 {
                     if (array[j-1] > array[j])
                     {
@@ -39,13 +48,13 @@ namespace Castelom.Sorting_Algorithms
             }
         }
 
-        public void SelectionSort(int[] array)
+        public void SelectionSort(List<int> array)
         {
             int indexMin;
-            for(int i = 0; i < array.Length - 1; i++)
+            for(int i = 0; i < array.Count - 1; i++)
             {
                 indexMin = i;
-                for(int j = i; j < array.Length-1; j++)
+                for(int j = i; j < array.Count -1; j++)
                 {
                     if (array[indexMin] > array[j])
                         indexMin = j;
@@ -58,10 +67,10 @@ namespace Castelom.Sorting_Algorithms
             }
         }
 
-        public void InsertionSort(int[] array)
+        public void InsertionSort(List<int> array)
         {
             int aux;
-            for(int i = 0;i < array.Length; i++)
+            for(int i = 0;i < array.Count; i++)
             {
                 int j = i;
                 aux = array[i];
@@ -72,6 +81,37 @@ namespace Castelom.Sorting_Algorithms
                 }
                 array[j] = aux;
             }
+        }
+        //----------- Low Performance---------------//
+
+
+        //----------- High Performance---------------//
+
+        private IList<int> Merge(IList<int> leftArray, IList<int> rightArray)
+        {
+            int i = 0, j = 0;
+            IList<int> result = new List<int>();
+            while(i < leftArray.Count && j < rightArray.Count) 
+            {
+                result.Add(leftArray[i] < rightArray[j]? leftArray[i++] : rightArray[j++]);
+            
+            }
+
+            return result.Concat(i < leftArray.Count ? leftArray.Skip(i) : rightArray.Skip(j)).ToList();
+        }
+
+        public IList<int> MergeSort(IList<int> list)
+        {
+            if(list.Count > 1)
+            {
+                int middle = (int)Math.Floor((double)(list.Count / 2));
+                IList<int> leftList = MergeSort(list.Take(middle).ToList());
+                IList<int> rightList = MergeSort(list.Skip(middle).Take(list.Count-middle).ToList());
+                list = Merge(leftList, rightList);
+
+            }
+
+            return list;
         }
     }
 }
